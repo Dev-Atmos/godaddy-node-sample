@@ -30,9 +30,9 @@ jobs:
             cd ~/airport
 
             if [ ! -d .git ]; then
-              git clone https://github.com/Dev-Atmos/godaddy-node-sample.git .
+              git clone https://${{ secrets.GH_PAT }}@github.com/Dev-Atmos/godaddy-node-sample.git .
             else
-              git pull origin main
+              git pull https://${{ secrets.GH_PAT }}@github.com/Dev-Atmos/godaddy-node-sample.git main
             fi
 
             npm install
