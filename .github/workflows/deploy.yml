@@ -2,7 +2,7 @@ name: Deploy to GoDaddy Shared Hosting DevAtmos Node js test project
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -15,10 +15,10 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          host: ${{ secrets.SSH_HOST || env.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT || env.SSH_PORT }}
+          username: ${{ secrets.SSH_USER || env.SSH_USER }}
+          password: ${{ secrets.SSH_PASS || env.SSH_PASS }}
           script: |
             mkdir -p ~/nodeapps/airport
             cd ~/nodeapps/airport
@@ -27,10 +27,22 @@ jobs:
             else
               git pull origin main
             fi
-            source ~/.bashrc
+
+            # Ensure NVM is loaded
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+            # Use Node.js 18
+            nvm install 18
             nvm use 18
+
             npm install --production
+
+            # Install PM2 if not installed
             if ! command -v pm2 &> /dev/null; then
               npm install -g pm2
             fi
+
+            # Restart or start the app
             pm2 restart airport || pm2 start server.js --name airport
