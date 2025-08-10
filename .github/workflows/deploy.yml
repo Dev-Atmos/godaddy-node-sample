@@ -16,17 +16,20 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          host: ${{ secrets.GODADDY_HOST }}
+          username: ${{ secrets.GODADDY_USER }}
+          key: ${{ secrets.GODADDY_SSH_KEY }}
           script: |
-             mkdir -p ~/airport
-              cd ~/airport
-              if [ ! -d .git ]; then
-                git clone https://github.com/Dev-Atmos/godaddy-node-sample.git .
-              else
-                git pull origin main
-              fi
-              npm install
-              pm2 restart all || pm2 start server.js --name airport
+            mkdir -p ~/airport
+            cd ~/airport
+            if [ ! -d .git ]; then
+              git clone git@github.com:Dev-Atmos/godaddy-node-sample.git .
+            else
+              git pull origin main
+            fi
+            curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+            sudo apt-get install -y nodejs
+            sudo npm install -g pm2
+            npm install
+            pm2 restart airport || pm2 start server.js --name airport
+
