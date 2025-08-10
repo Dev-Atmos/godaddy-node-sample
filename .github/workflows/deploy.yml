@@ -15,10 +15,10 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ 184.168.109.78 }}
-          port: ${{22}}
-          username: ${{ b6mo64ug6v9q }}
-          password: ${{ Tqdf6#Y2#8J4 }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             mkdir -p ~/nodeapps/airport
             cd ~/nodeapps/airport
