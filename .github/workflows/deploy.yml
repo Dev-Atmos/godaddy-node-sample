@@ -20,8 +20,17 @@ jobs:
           username: ${{ b6mo64ug6v9q }}
           password: ${{ Tqdf6#Y2#8J4 }}
           script: |
-            cd ~/nodeapps/airport || mkdir -p ~/nodeapps/sample-app && cd ~/nodeapps/airport
-            git clone git@github.com:dev-atmos/godaddy-node-sample.git . || git pull origin main
+            mkdir -p ~/nodeapps/airport
+            cd ~/nodeapps/airport
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/dev-atmos/godaddy-node-sample.git .
+            else
+              git pull origin main
+            fi
+            source ~/.bashrc
             nvm use 18
             npm install --production
-            pm2 restart all || pm2 start server.js --name airport
+            if ! command -v pm2 &> /dev/null; then
+              npm install -g pm2
+            fi
+            pm2 restart airport || pm2 start server.js --name airport
