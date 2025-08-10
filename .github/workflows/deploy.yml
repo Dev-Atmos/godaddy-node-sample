@@ -20,7 +20,12 @@ jobs:
           username: ${{ secrets.GODADDY_USER }}
           password: ${{ secrets.GODADDY_PASS }}
           script: |
-            cd /path/to/your/app
-            git pull origin main
-            npm install
-            pm2 restart all
+             mkdir -p ~/airport
+              cd ~/airport
+              if [ ! -d .git ]; then
+                git clone https://github.com/Dev-Atmos/godaddy-node-sample.git .
+              else
+                git pull origin main
+              fi
+              npm install
+              pm2 restart all || pm2 start server.js --name airport
