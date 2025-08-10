@@ -15,7 +15,8 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ 184.168.109.78:22 }}
+          host: ${{ 184.168.109.78 }}
+          port: ${{22}}
           username: ${{ b6mo64ug6v9q }}
           key: ${{ Tqdf6#Y2#8J4 }}
           script: |
