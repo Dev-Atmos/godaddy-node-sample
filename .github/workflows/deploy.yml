@@ -1,9 +1,9 @@
-name: Deploy to GoDaddy Shared Hosting DevAtmos Node js test project
+name: Deploy to GoDaddy Shared Hosting with nvm
 
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:   # 👈 allows manual trigger from VS Code or GitHub
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -13,23 +13,27 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Deploy via SSH
+      - name: Deploy via SSH (nvm friendly)
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ secrets.GODADDY_HOST }}
-          username: ${{ secrets.GODADDY_USER }}
-          key: ${{ secrets.GODADDY_SSH_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install 18
+            nvm use 18
+
             mkdir -p ~/airport
             cd ~/airport
+
             if [ ! -d .git ]; then
-              git clone git@github.com:Dev-Atmos/godaddy-node-sample.git .
+              git clone https://github.com/Dev-Atmos/godaddy-node-sample.git .
             else
               git pull origin main
             fi
-            curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-            sudo apt-get install -y nodejs
-            sudo npm install -g pm2
-            npm install
-            pm2 restart airport || pm2 start server.js --name airport
 
+            npm install
+            npx pm2 restart airport || npx pm2 start server.js --name airport
