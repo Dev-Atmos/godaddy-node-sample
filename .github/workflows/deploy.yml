@@ -1,0 +1,26 @@
+name: Deploy to GoDaddy Shared Hosting DevAtmos Node js test project
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ 184.168.109.78:22 }}
+          username: ${{ b6mo64ug6v9q }}
+          key: ${{ Tqdf6#Y2#8J4 }}
+          script: |
+            cd ~/nodeapps/airport || mkdir -p ~/nodeapps/sample-app && cd ~/nodeapps/airport
+            git clone git@github.com:dev-atmos/godaddy-node-sample.git . || git pull origin main
+            nvm use 18
+            npm install --production
+            pm2 restart all || pm2 start server.js --name airport
