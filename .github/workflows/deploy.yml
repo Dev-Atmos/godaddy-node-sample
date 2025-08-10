@@ -16,9 +16,10 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ secrets.GODADDY_HOST }}
-          username: ${{ secrets.GODADDY_USER }}
-          password: ${{ secrets.GODADDY_PASS }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
              mkdir -p ~/airport
               cd ~/airport
